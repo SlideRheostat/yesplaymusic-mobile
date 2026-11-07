@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 暗色模式 API 27+：导航栏图标保持白色 -->
+    <style name="Theme.LiteMusic" parent="Theme.LiteMusic.Base">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/md_surface</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+
+    <!-- 播放页暗色模式 API 27+：深色导航栏配白色系统栏图标 -->
+    <style name="Theme.LiteMusic.Player" parent="Theme.LiteMusic.Base">
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+</resources>

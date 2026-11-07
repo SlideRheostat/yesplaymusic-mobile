@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">YesPlayMusic</string>
+
+    <string name="tab_home">首页</string>
+    <string name="tab_search">搜索</string>
+    <string name="tab_mine">我的</string>
+
+    <string name="daily_recommend">每日推荐</string>
+    <string name="recommend_playlists">推荐歌单</string>
+    <string name="my_favorites">我喜欢的音乐</string>
+    <string name="my_playlists">我的歌单</string>
+    <string name="my_albums">我的专辑</string>
+    <string name="followed_artists">关注艺人</string>
+    <string name="load_failed">加载失败，点击重试</string>
+    <string name="no_playlists">暂无创建或收藏的歌单</string>
+    <string name="no_albums">暂无收藏的专辑</string>
+    <string name="no_followed_artists">暂无关注的艺人</string>
+    <string name="login">登录</string>
+    <string name="logout">退出登录</string>
+    <string name="login_tip">登录后享受完整曲库</string>
+
+    <string name="qr_tip">用网易云音乐App扫码登录</string>
+    <string name="qr_waiting">等待扫码…</string>
+    <string name="qr_scanned">已扫码，请在手机上确认</string>
+    <string name="qr_expired">二维码已过期，点击刷新</string>
+    <string name="qr_success">登录成功</string>
+
+    <string name="search_hint">搜索歌曲</string>
+    <string name="search_empty">输入关键词搜索歌曲</string>
+
+    <string name="play_all">播放全部</string>
+    <string name="lyric">歌词</string>
+    <string name="no_lyric">暂无歌词</string>
+    <string name="not_logged_in">请先登录</string>
+    <string name="loading">加载中…</string>
+    <string name="error_network">网络异常，请重试</string>
+    <string name="favorited">已添加到喜欢</string>
+    <string name="unfavorited">已取消喜欢</string>
+
+    <string name="theme_mode">深色模式</string>
+    <string name="theme_system">跟随系统</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
+
+    <string name="settings">设置</string>
+    <string name="sound_quality">音质设置</string>
+    <string name="quality_low">低 - 128Kbps</string>
+    <string name="quality_high">高 - 320Kbps</string>
+    <string name="quality_lossless">无损 - FLAC</string>
+    <string name="cache_limit">缓存体积上限</string>
+    <string name="cache_limit_hint">输入缓存体积上限（MB）</string>
+    <string name="cache_limit_invalid">请输入有效的体积</string>
+    <string name="cache_limit_unit">MB</string>
+    <string name="lyric_size">歌词字号</string>
+
+    <string name="hot_songs">热门歌曲</string>
+    <string name="all_albums">所有专辑</string>
+    <string name="choose_artist">选择艺人</string>
+    <string name="btn_trans">译</string>
+    <string name="trans_dialog_title">翻译与注音</string>
+    <string name="opt_trans">显示翻译</string>
+    <string name="opt_roma">显示平假名注音</string>
+    <string name="subscribe_ok">已收藏</string>
+    <string name="unsubscribe_ok">已取消收藏</string>
+    <string name="subscribe_fail">收藏失败</string>
+
+    <!-- 搜索页：对象/范围筛选 -->
+    <string name="search_object">搜索对象</string>
+    <string name="search_filter">筛选</string>
+    <string name="search_home_tip">输入关键词后可搜索单曲、歌单、专辑或艺人</string>
+    <string name="search_no_result">没有找到相关内容</string>
+    <string name="scope_all">全站</string>
+    <string name="scope_my_playlists">收藏的歌单</string>
+    <string name="scope_my_albums">收藏的专辑</string>
+    <string name="type_song">单曲</string>
+    <string name="type_playlist">歌单</string>
+    <string name="type_album">专辑</string>
+    <string name="type_artist">艺人</string>
+
+    <!-- 通用文案 -->
+    <string name="follow">关注</string>
+    <string name="followed">已关注</string>
+    <string name="action_failed">操作失败</string>
+    <string name="list_empty">列表为空</string>
+    <string name="load_more">加载更多</string>
+    <string name="no_more">没有更多了</string>
+    <string name="user_default">用户</string>
+    <string name="vip_member">VIP会员</string>
+    <string name="logged_in">已登录</string>
+    <string name="artist">艺人</string>
+    <string name="track_count">%1$d 首</string>
+    <string name="album_count">%1$d 张专辑</string>
+    <string name="artist_stats">%1$d 首歌曲 · %2$d 张专辑</string>
+    <string name="playlist_meta">%1$d 首 · %2$s 次播放</string>
+
+    <!-- 播放错误 -->
+    <string name="play_fail_all">连续播放失败，已停止</string>
+    <string name="play_skip">暂时无法播放，已跳过</string>
+    <string name="play_error">播放出错(%1$d/%2$d)</string>
+    <string name="play_cannot_open">无法打开音频</string>
+    <string name="vip_login_required">该歌曲为VIP，请先登录</string>
+    <string name="vip_no_permission">无权限播放（VIP/付费）</string>
+    <string name="notification_channel_playback">播放</string>
+    <string name="notification_open_tip">轻触打开</string>
+    <string name="notif_prev">上一首</string>
+    <string name="notif_next">下一首</string>
+    <string name="notif_play">播放</string>
+    <string name="notif_pause">暂停</string>
+
+</resources>

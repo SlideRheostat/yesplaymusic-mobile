@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Material Design 3 暗色颜色角色（与浅色共享同一色调方案） -->
+    <color name="md_primary">#FFB4A8</color>
+    <color name="md_on_primary">#690005</color>
+    <color name="md_primary_container">#93000A</color>
+    <color name="md_on_primary_container">#FFDAD6</color>
+
+    <color name="md_secondary">#E7BDB7</color>
+    <color name="md_on_secondary">#442925</color>
+    <color name="md_secondary_container">#5D3F3B</color>
+    <color name="md_on_secondary_container">#FFDAD6</color>
+
+    <color name="md_tertiary">#DEC48C</color>
+    <color name="md_on_tertiary">#3E2E04</color>
+    <color name="md_tertiary_container">#574400</color>
+    <color name="md_on_tertiary_container">#FBDFA6</color>
+
+    <color name="md_error">#FFB4AB</color>
+    <color name="md_on_error">#690005</color>
+    <color name="md_error_container">#93000A</color>
+    <color name="md_on_error_container">#FFDAD6</color>
+
+    <color name="md_surface">#1A1110</color>
+    <color name="md_on_surface">#F1DFDD</color>
+    <color name="md_surface_variant">#534340</color>
+    <color name="md_on_surface_variant">#D8C2BE</color>
+
+    <color name="md_surface_container_lowest">#140C0B</color>
+    <color name="md_surface_container_low">#221A19</color>
+    <color name="md_surface_container">#271E1D</color>
+    <color name="md_surface_container_high">#322826</color>
+    <color name="md_surface_container_highest">#3D3230</color>
+
+    <color name="md_outline">#A08C89</color>
+    <color name="md_outline_variant">#534340</color>
+    <color name="md_inverse_surface">#F1DFDD</color>
+    <color name="md_inverse_on_surface">#362F2E</color>
+    <color name="md_inverse_primary">#B3261E</color>
+</resources>

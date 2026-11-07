@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <!-- M3 FAB/圆形主操作：primaryContainer 色调容器 -->
+    <solid android:color="?attr/colorPrimaryContainer" />
+</shape>

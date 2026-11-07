@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- API 23+：浅色模式状态栏用深色图标 -->
+    <style name="Theme.LiteMusic" parent="Theme.LiteMusic.Base">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/sys_nav_gray</item>
+    </style>
+
+    <!-- 播放页 API 23+：状态栏使用与页面完全一致的主表面色 + 深色图标 -->
+    <style name="Theme.LiteMusic.Player" parent="Theme.LiteMusic.Base">
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
+    </style>
+</resources>

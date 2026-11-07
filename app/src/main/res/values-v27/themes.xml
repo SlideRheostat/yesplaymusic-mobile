@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- API 27+：浅色模式导航栏（三大金刚键）也用深色图标 -->
+    <style name="Theme.LiteMusic" parent="Theme.LiteMusic.Base">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">@color/sys_nav_gray_light</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
+    <!-- 播放页 API 27+：浅色导航栏底色必须配深色系统栏图标，否则三大金刚键不可见 -->
+    <style name="Theme.LiteMusic.Player" parent="Theme.LiteMusic.Base">
+        <item name="android:statusBarColor">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:navigationBarColor">?attr/colorSurface</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+</resources>

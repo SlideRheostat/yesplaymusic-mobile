@@ -1,0 +1,43 @@
+# ============================================================
+# LiteMusicAndroid / Android + Gradle 项目 .gitignore
+# ============================================================
+
+# ---------- Gradle 与构建产物 ----------
+/.gradle/
+/.kotlin/
+/build/
+/app/build/
+/captures/
+/.externalNativeBuild/
+/.cxx/
+*.hprof
+*.log
+
+# APK 体积较大，不进入 Git 仓库，建议通过 GitHub Releases 分发
+/YesPlayMusic-*.apk
+
+# ---------- 本机配置（包含 SDK 路径，禁止提交） ----------
+/local.properties
+
+# ---------- Android Studio / IntelliJ ----------
+/.idea/
+*.iml
+/.navigation/
+/.fleet/
+
+# ---------- 签名与密钥（禁止提交） ----------
+*.jks
+*.keystore
+keystore.properties
+signing.properties
+
+# ---------- 系统与编辑器临时文件 ----------
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# ---------- 本地克隆的仓库副本 ----------
+/yesplaymusic-mobile/
