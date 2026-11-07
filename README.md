@@ -1,8 +1,18 @@
-# YesPlayMusic Mobile（LiteMusicAndroid）
+# 写在前面
+本人只是一个无能的高中生，近期沉迷vibe coding，想要一个小而美的移动端听歌软件，看到yesplaymusic开源但是只有电脑端于是让AI以他为参考，生成手机应用，同时融入了自己对UI设计的喜好和理解。
+本项目由deepseek 4.1 flash和Qwen 3.8 flash共同制作和编译，希望大家喜欢，也欢迎批评和指正
+### 与yesplaymusic不同之处
+- 本项目基于Kotlin实现，不依赖 WebView，
+- 本项目使用Material Design 3主题与动效，同时融入我自己的好恶，个人认为UI还算优雅
+- 目前适配了Android 5.0及以上的移动设备
+
+接下来看一下AI写的README.md吧
+
+# YesPlayMusic Mobile
 
 一个基于 Kotlin + Material Design 3 的原生 Android 网易云音乐客户端。
 
-项目以 YesPlayMusic 的产品形态为参考，使用原生 Android 重新实现，不依赖 WebView。整体定位是**轻量、低依赖、兼容低版本设备**：`minSdk 21`，核心网络、图片加载、音频缓存、歌词渲染均为手写实现。
+项目以 YesPlayMusic 的产品形态为参考，使用原生 Android 重新实现，不依赖 WebView。整体定位是**轻量、低依赖、兼容低版本设备**：`minSdk 21`，核心网络、图片加载、音频缓存、歌词渲染均为vibe coding实现。
 
 > 本项目仅用于学习与个人使用，与网易云音乐官方无关。接口可能随官方调整而失效，请勿用于商业用途。
 
