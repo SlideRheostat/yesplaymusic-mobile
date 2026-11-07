@@ -16,7 +16,6 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.litemusic.Api
@@ -46,7 +45,7 @@ class PlayerActivity : AppCompatActivity(), PlayerService.Listener {
     private lateinit var btnPlay: ImageButton
     private lateinit var btnMode: ImageButton
     private lateinit var btnLike: ImageButton
-    private lateinit var btnTrans: MaterialButton
+    private lateinit var btnTrans: TextView
 
     private var lyrics: List<LyricLine> = emptyList()
     private val lyricRows = ArrayList<LinearLayout>()
@@ -290,10 +289,18 @@ class PlayerActivity : AppCompatActivity(), PlayerService.Listener {
         updateLyricEmpty()
     }
 
-    /** 中文翻译与平假名注音二选一，可切换到不显示 */
+    /** 日语歌：翻译与注音二选一；非日语歌：直接切换中文翻译显示 */
     private fun onTransClick() {
         val hasTrans = lyrics.any { it.trans != null }
         val hasRoma = lyrics.any { it.roma != null }
+        if (!hasRoma) {
+            if (!hasTrans) return
+            Prefs.auxMode =
+                if (Prefs.auxMode == Prefs.AUX_TRANS) Prefs.AUX_NONE else Prefs.AUX_TRANS
+            applyTransFlags()
+            return
+        }
+
         val modes = ArrayList<Int>(3)
         val labels = ArrayList<String>(3)
         modes.add(Prefs.AUX_NONE)

@@ -23,7 +23,7 @@
                 android:id="@+id/btn_back"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="@drawable/bg_circle_ripple"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_back" />
 
@@ -71,13 +71,11 @@
                 android:visibility="invisible" />
         </LinearLayout>
 
-        <com.google.android.material.progressindicator.LinearProgressIndicator
+        <com.litemusic.ui.LoadingBar
             android:id="@+id/progress"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:trackThickness="4dp"
-            app:trackCornerRadius="2dp" />
+            android:layout_height="4dp"
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler"

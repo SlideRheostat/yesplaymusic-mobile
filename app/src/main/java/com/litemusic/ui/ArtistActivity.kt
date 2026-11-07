@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.litemusic.Api
 import com.litemusic.ImageLoader
@@ -54,7 +53,7 @@ class ArtistActivity : AppCompatActivity() {
     }
 
     private lateinit var recycler: RecyclerView
-    private lateinit var progress: LinearProgressIndicator
+    private lateinit var loading: LoadingBar
     private lateinit var followBtn: MaterialButton
     private var artistId = 0L
     private var followed = false
@@ -81,10 +80,10 @@ class ArtistActivity : AppCompatActivity() {
         followBtn.setOnClickListener { toggleFollow() }
 
         recycler = findViewById(R.id.recycler)
-        progress = findViewById(R.id.progress)
+        loading = findViewById(R.id.progress)
         recycler.layoutManager = LinearLayoutManager(this)
         recycler.adapter = ArtistAdapter()
-        progress.visibility = View.VISIBLE
+        loading.show()
 
         mini = MiniPlayerController(this, findViewById(android.R.id.content))
 
@@ -159,8 +158,13 @@ class ArtistActivity : AppCompatActivity() {
         super.onStop()
     }
 
+    override fun onDestroy() {
+        loading.hide()
+        super.onDestroy()
+    }
+
     private fun checkDone() {
-        if (songsLoaded && albumsLoaded) progress.visibility = View.GONE
+        if (songsLoaded && albumsLoaded) loading.hide()
     }
 
     private fun rebuild() {

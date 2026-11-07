@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
-import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.snackbar.Snackbar
 import com.litemusic.Api
 import com.litemusic.Playlist
@@ -25,7 +24,7 @@ class PlaylistActivity : AppCompatActivity() {
 
     private var songs: List<Song> = emptyList()
     private lateinit var recycler: RecyclerView
-    private lateinit var progress: LinearProgressIndicator
+    private lateinit var loading: LoadingBar
     private lateinit var titleView: TextView
     private lateinit var subtitleView: TextView
     private lateinit var btnSub: ImageButton
@@ -66,7 +65,7 @@ class PlaylistActivity : AppCompatActivity() {
         setContentView(R.layout.activity_playlist)
 
         recycler = findViewById(R.id.recycler)
-        progress = findViewById(R.id.progress)
+        loading = findViewById(R.id.progress)
         titleView = findViewById(R.id.title)
         subtitleView = findViewById(R.id.subtitle)
 
@@ -88,7 +87,7 @@ class PlaylistActivity : AppCompatActivity() {
             }
         }
 
-        progress.visibility = View.VISIBLE
+        loading.show()
         when (type) {
             1 -> Api.recommendSongs { r -> handle(r) }
             2 -> loadLiked()
@@ -164,6 +163,11 @@ class PlaylistActivity : AppCompatActivity() {
         super.onStop()
     }
 
+    override fun onDestroy() {
+        loading.hide()
+        super.onDestroy()
+    }
+
     private fun loadLiked() {
         Api.likelist { r ->
             val ids = r.getOrNull()
@@ -177,7 +181,7 @@ class PlaylistActivity : AppCompatActivity() {
 
     private fun handle(r: Result<List<Song>>) {
         if (isFinishing) return
-        progress.visibility = View.GONE
+        loading.hide()
         r.onSuccess {
             songs = it.filter { s -> s.id > 0 }
             subtitleView.text = if (subtitleView.text.isEmpty()) getString(R.string.track_count, songs.size) else subtitleView.text

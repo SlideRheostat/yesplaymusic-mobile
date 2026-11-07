@@ -20,15 +20,19 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:minHeight="56dp"
+            android:orientation="horizontal"
+            android:padding="4dp">
 
             <ImageButton
                 android:id="@+id/btn_back"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="@drawable/bg_circle_ripple"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_back"
                 android:tint="?attr/colorOnSurfaceVariant" />
@@ -38,29 +42,41 @@
                 android:layout_height="1dp"
                 android:layout_weight="1" />
 
-            <com.google.android.material.button.MaterialButton
+            <TextView
                 android:id="@+id/btn_trans_toggle"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:minWidth="0dp"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_circle_ripple"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
                 android:text="@string/btn_trans"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                 android:textColor="?attr/colorPrimary"
                 android:visibility="gone" />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/cover"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_weight="1"
-            android:contentDescription="@null"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_music_note" />
+            android:layout_weight="1">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/cover"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_music_note"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/ShapeAppearance.Lite.Rounded12" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- 歌名过长时可左右滑动查看完整内容，不再省略号截断 -->
         <HorizontalScrollView
