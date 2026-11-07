@@ -88,7 +88,8 @@ object AudioCache {
                     return@execute
                 }
                 if (tmp.length() > 0 && tmp.renameTo(target)) {
-                    trim()
+                    // 不淘汰刚下载成功的文件，否则缓存上限过小时会删掉待播放文件导致播放失败
+                    trim(keep = target)
                     cb(target)
                 } else {
                     tmp.delete()
@@ -103,8 +104,12 @@ object AudioCache {
         }
     }
 
-    /** 超出体积上限时按最久未使用淘汰 */
-    private fun trim() {
+    /**
+     * 超出体积上限时按最久未使用淘汰。
+     * [keep] 为刚下载完成、即将交给播放器的文件，即使单曲超过上限也不能删除；
+     * 此时缓存最多临时超出上限一首歌的体积，后续新歌下载时会继续回收旧文件。
+     */
+    private fun trim(keep: File? = null) {
         val d = dir ?: return
         val maxBytes = Prefs.cacheMB.coerceAtLeast(1) * 1024L * 1024L
         val files = d.listFiles()?.filter { it.isFile && !it.name.endsWith(".tmp") }
@@ -112,6 +117,7 @@ object AudioCache {
         var total = files.sumOf { it.length() }
         for (f in files.asReversed()) {
             if (total <= maxBytes) break
+            if (keep != null && f.absolutePath == keep.absolutePath) continue
             val len = f.length()
             if (f.delete()) total -= len
         }

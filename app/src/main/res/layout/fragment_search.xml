@@ -36,56 +36,50 @@
         android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
         android:textColor="?attr/colorOnSurfaceVariant" />
 
-    <!-- 搜索对象：单曲 / 歌单 / 专辑 / 艺人（仅全站范围可用） -->
-    <HorizontalScrollView
-        android:id="@+id/type_scroll"
+    <!-- 搜索对象：单曲 / 歌单 / 专辑 / 艺人（仅全站范围可用，显示不全时自动换行） -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/type_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none">
+        app:chipSpacingHorizontal="8dp"
+        app:chipSpacingVertical="8dp"
+        app:selectionRequired="true"
+        app:singleLine="false"
+        app:singleSelection="true">
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/type_group"
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_type_song"
+            style="@style/Widget.Material3.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:chipSpacingHorizontal="8dp"
-            app:selectionRequired="true"
-            app:singleLine="true"
-            app:singleSelection="true">
+            android:checkable="true"
+            android:checked="true"
+            android:text="@string/type_song" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_type_song"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checkable="true"
-                android:checked="true"
-                android:text="@string/type_song" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_type_playlist"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="@string/type_playlist" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_type_playlist"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checkable="true"
-                android:text="@string/type_playlist" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_type_album"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="@string/type_album" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_type_album"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checkable="true"
-                android:text="@string/type_album" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_type_artist"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checkable="true"
-                android:text="@string/type_artist" />
-        </com.google.android.material.chip.ChipGroup>
-    </HorizontalScrollView>
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_type_artist"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="@string/type_artist" />
+    </com.google.android.material.chip.ChipGroup>
 
     <TextView
         android:id="@+id/label_search_filter"
@@ -96,56 +90,50 @@
         android:textAppearance="@style/TextAppearance.Material3.LabelMedium"
         android:textColor="?attr/colorOnSurfaceVariant" />
 
-    <!-- 筛选：全站 / 我喜欢的音乐 / 收藏的歌单 / 收藏的专辑 -->
-    <HorizontalScrollView
-        android:id="@+id/scope_scroll"
+    <!-- 筛选：全站 / 我喜欢的音乐 / 收藏的歌单 / 收藏的专辑（显示不全时自动换行，不横向滑动） -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/scope_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none">
+        app:chipSpacingHorizontal="8dp"
+        app:chipSpacingVertical="8dp"
+        app:selectionRequired="true"
+        app:singleLine="false"
+        app:singleSelection="true">
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/scope_group"
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_scope_all"
+            style="@style/Widget.Material3.Chip.Filter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:chipSpacingHorizontal="8dp"
-            app:selectionRequired="true"
-            app:singleLine="true"
-            app:singleSelection="true">
+            android:checkable="true"
+            android:checked="true"
+            android:text="@string/scope_all" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_scope_all"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checkable="true"
-                android:checked="true"
-                android:text="@string/scope_all" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_scope_liked"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="@string/my_favorites" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_scope_liked"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checkable="true"
-                android:text="@string/my_favorites" />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_scope_playlists"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="@string/scope_my_playlists" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_scope_playlists"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checkable="true"
-                android:text="@string/scope_my_playlists" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chip_scope_albums"
-                style="@style/Widget.Material3.Chip.Filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:checkable="true"
-                android:text="@string/scope_my_albums" />
-        </com.google.android.material.chip.ChipGroup>
-    </HorizontalScrollView>
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip_scope_albums"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checkable="true"
+            android:text="@string/scope_my_albums" />
+    </com.google.android.material.chip.ChipGroup>
 
     <TextView
         android:id="@+id/empty_tip"

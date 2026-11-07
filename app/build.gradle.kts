@@ -11,8 +11,8 @@ android {
         applicationId = "com.yesplaymusic.mobile"
         minSdk = 21
         targetSdk = 34
-        versionCode = 29
-        versionName = "3.0.8"
+        versionCode = 33
+        versionName = "3.1.1"
     }
 
     buildTypes {

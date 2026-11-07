@@ -136,6 +136,7 @@ class PlayerActivity : AppCompatActivity(), PlayerService.Listener {
             return
         }
         bindSong(s.currentSong)
+        syncPlaybackPosition(s)
         setPlayIcon(s.playing, animate = false)
         updateModeIcon(s.mode)
     }
@@ -143,6 +144,17 @@ class PlayerActivity : AppCompatActivity(), PlayerService.Listener {
     override fun onStop() {
         PlayerService.listeners.remove(this)
         super.onStop()
+    }
+
+    /** 暂停时没有进度回调，进入页面需要主动同步一次已缓存的播放位置 */
+    private fun syncPlaybackPosition(s: PlayerService) {
+        val pos = s.position
+        timeCurrent.text = formatTime(pos.toLong())
+        if (s.duration > 0) {
+            val max = seek.max.coerceAtLeast(1)
+            val target = (pos.toLong() * max / s.duration).toInt().coerceIn(0, max)
+            seek.setProgressCompat(target, false)
+        }
     }
 
     private fun bindSong(song: Song?) {
@@ -278,50 +290,64 @@ class PlayerActivity : AppCompatActivity(), PlayerService.Listener {
         updateLyricEmpty()
     }
 
-    /** 有注音时弹窗分别控制翻译/注音；无注音时直接切换翻译 */
+    /** 中文翻译与平假名注音二选一，可切换到不显示 */
     private fun onTransClick() {
-        if (lyrics.any { it.roma != null }) {
-            val checked = booleanArrayOf(Prefs.showTrans, Prefs.showRoma)
-            val labels = arrayOf(getString(R.string.opt_trans), getString(R.string.opt_roma))
-            MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.trans_dialog_title)
-                .setMultiChoiceItems(labels, checked) { _, which, isChecked -> checked[which] = isChecked }
-                .setPositiveButton(android.R.string.ok) { _, _ ->
-                    Prefs.showTrans = checked[0]
-                    Prefs.showRoma = checked[1]
-                    applyTransFlags()
-                }
-                .setNegativeButton(android.R.string.cancel, null)
-                .show()
-        } else {
-            Prefs.showTrans = !Prefs.showTrans
-            applyTransFlags()
+        val hasTrans = lyrics.any { it.trans != null }
+        val hasRoma = lyrics.any { it.roma != null }
+        val modes = ArrayList<Int>(3)
+        val labels = ArrayList<String>(3)
+        modes.add(Prefs.AUX_NONE)
+        labels.add(getString(R.string.opt_none))
+        if (hasTrans) {
+            modes.add(Prefs.AUX_TRANS)
+            labels.add(getString(R.string.opt_trans))
         }
+        if (hasRoma) {
+            modes.add(Prefs.AUX_ROMA)
+            labels.add(getString(R.string.opt_roma))
+        }
+        if (labels.size <= 1) return
+
+        val current = modes.indexOf(Prefs.auxMode).coerceAtLeast(0)
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.trans_dialog_title)
+            .setSingleChoiceItems(labels.toTypedArray(), current) { dialog, which ->
+                Prefs.auxMode = modes[which]
+                applyTransFlags()
+                dialog.dismiss()
+            }
+            .show()
     }
 
     private fun applyTransFlags() {
+        val mode = Prefs.auxMode
         for (i in lyrics.indices) {
             val line = lyrics[i]
             val row = lyricRows.getOrNull(i) ?: continue
             val trans = row.getChildAt(1) as TextView
-            val parts = ArrayList<String>(2)
-            // 全开时自上而下：原歌词（主行）→ 平假名注音 → 中文翻译
-            if (Prefs.showRoma) line.roma?.let { parts.add(it) }
-            if (Prefs.showTrans) line.trans?.let { parts.add(it) }
-            val t = parts.joinToString("\n")
-            if (t.isEmpty()) {
+            val text = when (mode) {
+                Prefs.AUX_TRANS -> line.trans
+                Prefs.AUX_ROMA -> line.roma
+                else -> null
+            }
+            if (text.isNullOrEmpty()) {
                 trans.visibility = View.GONE
             } else {
                 trans.visibility = View.VISIBLE
-                trans.text = t
+                trans.text = text
             }
         }
         updateTransBtn()
     }
 
     private fun updateTransBtn() {
+        val hasTrans = lyrics.any { it.trans != null }
         val hasRoma = lyrics.any { it.roma != null }
-        val on = Prefs.showTrans || (hasRoma && Prefs.showRoma)
+        val on = when (Prefs.auxMode) {
+            Prefs.AUX_TRANS -> hasTrans
+            Prefs.AUX_ROMA -> hasRoma
+            else -> false
+        }
         btnTrans.alpha = if (on) 1f else 0.45f
     }
 
@@ -365,7 +391,10 @@ class PlayerActivity : AppCompatActivity(), PlayerService.Listener {
     }
 
     override fun onPlayStateChanged(playing: Boolean) {
-        runOnUiThread { setPlayIcon(playing, animate = true) }
+        runOnUiThread {
+            setPlayIcon(playing, animate = true)
+            if (!playing) PlayerService.instance?.let { syncPlaybackPosition(it) }
+        }
     }
 
     /** M3 图标切换：先 90ms 加速淡出，换图后 180ms 减速淡入 */

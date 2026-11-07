@@ -48,8 +48,9 @@
     <string name="quality_low">低 - 128Kbps</string>
     <string name="quality_high">高 - 320Kbps</string>
     <string name="quality_lossless">无损 - FLAC</string>
-    <string name="cache_limit">缓存体积上限</string>
-    <string name="cache_limit_hint">输入缓存体积上限（MB）</string>
+    <string name="quality_next_track">音质将在下一首歌曲生效</string>
+    <string name="cache_limit">歌曲缓存上限</string>
+    <string name="cache_limit_hint">输入歌曲缓存上限（MB，不含图片）</string>
     <string name="cache_limit_invalid">请输入有效的体积</string>
     <string name="cache_limit_unit">MB</string>
     <string name="lyric_size">歌词字号</string>
@@ -59,8 +60,9 @@
     <string name="choose_artist">选择艺人</string>
     <string name="btn_trans">译</string>
     <string name="trans_dialog_title">翻译与注音</string>
-    <string name="opt_trans">显示翻译</string>
-    <string name="opt_roma">显示平假名注音</string>
+    <string name="opt_none">不显示附加内容</string>
+    <string name="opt_trans">中文翻译</string>
+    <string name="opt_roma">平假名注音</string>
     <string name="subscribe_ok">已收藏</string>
     <string name="unsubscribe_ok">已取消收藏</string>
     <string name="subscribe_fail">收藏失败</string>

@@ -93,15 +93,28 @@ object Prefs {
         get() = sp.getInt("cacheMB", 256)
         set(v) { sp.edit().putInt("cacheMB", v).apply() }
 
-    /** 歌词是否显示翻译 */
-    var showTrans: Boolean
-        get() = sp.getBoolean("showTrans", true)
-        set(v) { sp.edit().putBoolean("showTrans", v).apply() }
+    /** 歌词附加显示：0 不显示 / 1 中文翻译 / 2 平假名注音（二选一） */
+    const val AUX_NONE = 0
+    const val AUX_TRANS = 1
+    const val AUX_ROMA = 2
 
-    /** 歌词是否显示平假名注音（日语歌曲） */
-    var showRoma: Boolean
-        get() = sp.getBoolean("showRoma", true)
-        set(v) { sp.edit().putBoolean("showRoma", v).apply() }
+    var auxMode: Int
+        get() {
+            val saved = sp.getInt("auxMode", -1)
+            if (saved in AUX_NONE..AUX_ROMA) return saved
+            // 兼容旧版本两个开关同时存在的状态：优先迁移为中文翻译
+            val trans = sp.getBoolean("showTrans", true)
+            val roma = sp.getBoolean("showRoma", true)
+            return when {
+                trans -> AUX_TRANS
+                roma -> AUX_ROMA
+                else -> AUX_NONE
+            }
+        }
+        set(v) {
+            sp.edit().putInt("auxMode", v.coerceIn(AUX_NONE, AUX_ROMA))
+                .remove("showTrans").remove("showRoma").apply()
+        }
 
     /** 歌词字号（sp） */
     var lyricSize: Int

@@ -34,10 +34,8 @@ class SearchFragment : Fragment() {
     private lateinit var input: TextInputEditText
     private lateinit var recycler: RecyclerView
     private lateinit var emptyTip: TextView
-    private lateinit var typeScroll: View
     private lateinit var typeGroup: ChipGroup
     private lateinit var scopeGroup: ChipGroup
-    private lateinit var scopeScroll: View
     private lateinit var labelObject: View
     private lateinit var labelFilter: View
 
@@ -53,10 +51,8 @@ class SearchFragment : Fragment() {
         input = view.findViewById(R.id.search_input)
         recycler = view.findViewById(R.id.recycler)
         emptyTip = view.findViewById(R.id.empty_tip)
-        typeScroll = view.findViewById(R.id.type_scroll)
         typeGroup = view.findViewById(R.id.type_group)
         scopeGroup = view.findViewById(R.id.scope_group)
-        scopeScroll = view.findViewById(R.id.scope_scroll)
         labelObject = view.findViewById(R.id.label_search_object)
         labelFilter = view.findViewById(R.id.label_search_filter)
         recycler.layoutManager = LinearLayoutManager(requireContext())
@@ -84,7 +80,7 @@ class SearchFragment : Fragment() {
                 return@setOnCheckedStateChangeListener
             }
             scope = newScope
-            typeScroll.visibility = if (scope == Scope.ALL) View.VISIBLE else View.GONE
+            typeGroup.visibility = if (scope == Scope.ALL) View.VISIBLE else View.GONE
             runSearch()
         }
         input.setOnEditorActionListener { _, actionId, event ->
@@ -125,8 +121,8 @@ class SearchFragment : Fragment() {
         val v = if (visible) View.VISIBLE else View.GONE
         labelObject.visibility = v
         labelFilter.visibility = v
-        scopeScroll.visibility = v
-        typeScroll.visibility = if (visible && scope == Scope.ALL) View.VISIBLE else View.GONE
+        scopeGroup.visibility = v
+        typeGroup.visibility = if (visible && scope == Scope.ALL) View.VISIBLE else View.GONE
     }
 
     private fun runSearch() {

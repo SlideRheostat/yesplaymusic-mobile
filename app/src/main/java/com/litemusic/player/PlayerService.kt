@@ -89,9 +89,22 @@ class PlayerService : Service() {
     var duration: Int = 0
         private set
 
-    /** 当前播放位置（毫秒），供迷你播放条进度环等 UI 读取 */
+    /**
+     * 当前播放位置（毫秒），供迷你播放条进度环等 UI 读取。
+     * 暂停/停止时直接返回缓存值，避免在长时间暂停后从 UI 线程调用
+     * MediaPlayer.currentPosition 阻塞主线程导致界面卡死。
+     */
+    private var lastPosition: Int = 0
     val position: Int
-        get() = try { mp?.currentPosition ?: 0 } catch (e: Exception) { 0 }
+        get() = if (playing) {
+            try {
+                mp?.currentPosition?.also { lastPosition = it } ?: lastPosition
+            } catch (e: Exception) {
+                lastPosition
+            }
+        } else {
+            lastPosition
+        }
 
     val currentSong: Song? get() = queue.getOrNull(index)
 
@@ -114,7 +127,8 @@ class PlayerService : Service() {
         override fun run() {
             val p = mp
             if (p != null && playing) {
-                val pos = try { p.currentPosition } catch (e: Exception) { 0 }
+                val pos = try { p.currentPosition } catch (e: Exception) { lastPosition }
+                lastPosition = pos
                 for (l in ArrayList(listeners)) l.onProgress(pos, duration)
                 handler.postDelayed(this, 500)
             }
@@ -204,6 +218,8 @@ class PlayerService : Service() {
         try {
             p.pause()
             playing = false
+            // 立即停止进度轮询；暂停后不再触碰 MediaPlayer
+            handler.removeCallbacks(ticker)
             notifyState()
         } catch (e: Exception) {
         }
@@ -213,6 +229,7 @@ class PlayerService : Service() {
         val p = mp ?: return
         try {
             p.seekTo(ms)
+            lastPosition = ms
             updateSessionState()
             for (l in ArrayList(listeners)) l.onProgress(ms, duration)
         } catch (e: Exception) {
@@ -257,6 +274,7 @@ class PlayerService : Service() {
         val token = ++loadToken
         playing = false
         duration = 0
+        lastPosition = 0
         // 强制刷新通知：暂停状态切歌时 lastNotifPlaying 未变化，不重置会保留旧歌名
         lastNotifPlaying = null
         handler.removeCallbacks(ticker)
@@ -338,6 +356,7 @@ class PlayerService : Service() {
                 }
                 it.start()
                 duration = it.duration
+                lastPosition = 0
                 playing = true
                 consecutiveFailures = 0
                 notifyState()
@@ -347,6 +366,7 @@ class PlayerService : Service() {
             p.setOnCompletionListener {
                 if (token != loadToken) return@setOnCompletionListener
                 if (mode == MODE_LOOP_ONE) {
+                    lastPosition = 0
                     try { p.seekTo(0); p.start() } catch (_: Exception) {}
                 } else {
                     next()

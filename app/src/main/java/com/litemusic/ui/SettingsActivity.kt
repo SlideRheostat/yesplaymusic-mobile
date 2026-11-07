@@ -12,6 +12,7 @@ import com.litemusic.App
 import com.litemusic.AudioCache
 import com.litemusic.Prefs
 import com.litemusic.R
+import com.litemusic.player.PlayerService
 
 /** 设置页：深色模式、音质、缓存歌曲上限 */
 class SettingsActivity : AppCompatActivity() {
@@ -101,9 +102,14 @@ class SettingsActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setTitle(getString(R.string.sound_quality))
             .setSingleChoiceItems(labels, current) { dialog, which ->
+                val old = Prefs.level
                 Prefs.level = levels[which]
                 valueView.text = qualityLabel(Prefs.level)
                 dialog.dismiss()
+                // 当前已加载的歌曲不会中途换档，提示用户新音质从下一首开始
+                if (old != levels[which] && PlayerService.instance?.currentSong != null) {
+                    Toast.makeText(this, R.string.quality_next_track, Toast.LENGTH_SHORT).show()
+                }
             }
             .show()
     }
