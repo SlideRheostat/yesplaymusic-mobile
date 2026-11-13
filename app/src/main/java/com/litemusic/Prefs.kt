@@ -131,6 +131,16 @@ object Prefs {
         get() = sp.getInt("themeMode", 0)
         set(v) { sp.edit().putInt("themeMode", v).apply() }
 
+    /** 播放页防熄屏：开启后播放页保持屏幕常亮 */
+    var keepScreenOn: Boolean
+        get() = sp.getBoolean("keepScreenOn", true)
+        set(v) { sp.edit().putBoolean("keepScreenOn", v).apply() }
+
+    /** 播放页全屏：开启后播放页隐藏状态栏 */
+    var playerFullscreen: Boolean
+        get() = sp.getBoolean("playerFullscreen", false)
+        set(v) { sp.edit().putBoolean("playerFullscreen", v).apply() }
+
     val loggedIn: Boolean get() = musicU.isNotEmpty()
 
     fun clearLogin() {

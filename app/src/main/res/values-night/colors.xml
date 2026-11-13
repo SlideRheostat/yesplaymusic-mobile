@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Material Design 3 暗色颜色角色（与浅色共享同一色调方案） -->
+    <!--
+        暗色配色：对齐系统设置页的深色方案
+        - 近似纯黑背景 (#0B0B0C) + 深灰卡片 (#1C1C1E)
+        - 主文字近白、次要文字中性灰
+        - 强调色保持应用原本的红棕色调
+    -->
     <color name="md_primary">#FFB4A8</color>
     <color name="md_on_primary">#690005</color>
     <color name="md_primary_container">#93000A</color>
@@ -21,20 +26,23 @@
     <color name="md_error_container">#93000A</color>
     <color name="md_on_error_container">#FFDAD6</color>
 
-    <color name="md_surface">#1A1110</color>
-    <color name="md_on_surface">#F1DFDD</color>
-    <color name="md_surface_variant">#534340</color>
-    <color name="md_on_surface_variant">#D8C2BE</color>
+    <color name="md_surface">#0B0B0C</color>
+    <color name="md_on_surface">#EEEEEE</color>
+    <color name="md_surface_variant">#2C2C2E</color>
+    <color name="md_on_surface_variant">#8E8E93</color>
 
-    <color name="md_surface_container_lowest">#140C0B</color>
-    <color name="md_surface_container_low">#221A19</color>
-    <color name="md_surface_container">#271E1D</color>
-    <color name="md_surface_container_high">#322826</color>
-    <color name="md_surface_container_highest">#3D3230</color>
+    <color name="md_surface_container_lowest">#070708</color>
+    <color name="md_surface_container_low">#1C1C1E</color>
+    <color name="md_surface_container">#202022</color>
+    <color name="md_surface_container_high">#242426</color>
+    <color name="md_surface_container_highest">#2C2C2E</color>
 
-    <color name="md_outline">#A08C89</color>
-    <color name="md_outline_variant">#534340</color>
-    <color name="md_inverse_surface">#F1DFDD</color>
-    <color name="md_inverse_on_surface">#362F2E</color>
+    <color name="md_outline">#5A5A5F</color>
+    <color name="md_outline_variant">#2C2C2E</color>
+    <color name="md_inverse_surface">#EEEEEE</color>
+    <color name="md_inverse_on_surface">#2F3033</color>
     <color name="md_inverse_primary">#B3261E</color>
+
+    <!-- 搜索框填充色：与系统设置页一致，比卡片略深的凹槽感 -->
+    <color name="search_box">#18181B</color>
 </resources>

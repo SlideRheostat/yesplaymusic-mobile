@@ -187,13 +187,9 @@ class MineFragment : Fragment() {
 
     private fun bindHeader(h: HeaderVH) {
         val loggedIn = Prefs.loggedIn
-        if (loggedIn) {
-            h.nickname.text = Prefs.nickname.ifEmpty { getString(R.string.user_default) }
-            h.sub.text = getString(if (Prefs.vipType > 0) R.string.vip_member else R.string.logged_in)
-            h.action.text = getString(R.string.logout)
-            h.action.setOnClickListener { Api.logout { likedId = 0; playlists = emptyList(); albums = emptyList(); artists = emptyList(); refresh() } }
-            ImageLoader.load(h.avatar, Prefs.avatar, 160)
-        } else {
+        // 登录后账号信息与退出登录已移至设置页顶部，“我的”页不再重复展示
+        h.cardUser.visibility = if (loggedIn) View.GONE else View.VISIBLE
+        if (!loggedIn) {
             h.nickname.text = getString(R.string.login)
             h.sub.text = getString(R.string.login_tip)
             h.action.text = getString(R.string.login)
@@ -265,6 +261,7 @@ class MineFragment : Fragment() {
     }
 
     private class HeaderVH(v: View) : RecyclerView.ViewHolder(v) {
+        val cardUser: View = v.findViewById(R.id.card_user)
         val avatar: ImageView = v.findViewById(R.id.avatar)
         val nickname: TextView = v.findViewById(R.id.nickname)
         val sub: TextView = v.findViewById(R.id.sub)

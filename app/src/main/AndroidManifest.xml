@@ -48,6 +48,10 @@
             android:name=".ui.SettingsActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.CachedSongsActivity"
+            android:exported="false" />
+
         <service
             android:name=".player.PlayerService"
             android:exported="false"

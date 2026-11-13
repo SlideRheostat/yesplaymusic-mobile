@@ -26,7 +26,7 @@
     <string name="qr_expired">二维码已过期，点击刷新</string>
     <string name="qr_success">登录成功</string>
 
-    <string name="search_hint">搜索歌曲</string>
+    <string name="search_hint">搜索</string>
     <string name="search_empty">输入关键词搜索歌曲</string>
 
     <string name="play_all">播放全部</string>
@@ -50,10 +50,17 @@
     <string name="quality_lossless">无损 - FLAC</string>
     <string name="quality_next_track">音质将在下一首歌曲生效</string>
     <string name="cache_limit">歌曲缓存上限</string>
-    <string name="cache_limit_hint">输入歌曲缓存上限（MB，不含图片）</string>
+    <string name="cache_limit_hint">单位 MB，不含图片缓存</string>
     <string name="cache_limit_invalid">请输入有效的体积</string>
     <string name="cache_limit_unit">MB</string>
     <string name="lyric_size">歌词字号</string>
+    <string name="cached_songs">已缓存的歌</string>
+    <string name="cached_songs_summary">%1$d 首 · %2$s</string>
+    <string name="cached_songs_empty">暂无缓存歌曲</string>
+    <string name="unknown_song">未知歌曲</string>
+    <string name="unknown_song_artist">已缓存</string>
+    <string name="keep_screen_on">播放页防熄屏</string>
+    <string name="fullscreen_mode">全屏模式</string>
 
     <string name="hot_songs">热门歌曲</string>
     <string name="all_albums">所有专辑</string>

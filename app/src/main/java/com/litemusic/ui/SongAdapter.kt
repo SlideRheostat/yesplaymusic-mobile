@@ -14,9 +14,10 @@ import com.litemusic.Prefs
 import com.litemusic.R
 import com.litemusic.Song
 
-/** 通用歌曲列表适配器（搜索/歌单/收藏共用） */
+/** 通用歌曲列表适配器（搜索/歌单/收藏/缓存列表共用） */
 class SongAdapter(
     private val songs: List<Song>,
+    private val showLike: Boolean = true,
     private val onClick: (Int) -> Unit,
 ) : RecyclerView.Adapter<SongAdapter.VH>() {
 
@@ -76,6 +77,8 @@ class SongAdapter(
             }
             true
         }
+        h.like.visibility = if (showLike) View.VISIBLE else View.GONE
+        if (!showLike) return
         h.like.setImageResource(
             if (LikedStore.contains(song.id)) R.drawable.ic_heart_filled else R.drawable.ic_heart
         )

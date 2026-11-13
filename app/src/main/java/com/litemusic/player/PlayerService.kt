@@ -62,12 +62,29 @@ class PlayerService : Service() {
         @JvmStatic
         private var pending: Pair<List<Song>, Int>? = null
 
+        /** 待播放队列是否来自“已缓存的歌”（优先任意音质等级的本地文件） */
+        @JvmStatic
+        private var pendingCached = false
+
         /** UI 统一入口：播放某列表的第 index 首（服务未起则先起再播） */
         fun play(ctx: Context, songs: List<Song>, index: Int) {
             val s = instance
             if (s != null) {
                 s.setQueue(songs, index)
             } else {
+                pendingCached = false
+                pending = songs to index
+                ensureStarted(ctx)
+            }
+        }
+
+        /** 播放缓存列表：优先本地文件，没有对应文件时才走网络补下 */
+        fun playCached(ctx: Context, songs: List<Song>, index: Int) {
+            val s = instance
+            if (s != null) {
+                s.setQueue(songs, index, cached = true)
+            } else {
+                pendingCached = true
                 pending = songs to index
                 ensureStarted(ctx)
             }
@@ -111,6 +128,9 @@ class PlayerService : Service() {
     private var loadToken = 0
     private var lastNotifPlaying: Boolean? = null
 
+    /** 当前队列来自“已缓存的歌”：优先播放任意音质等级的本地缓存文件 */
+    private var preferCached = false
+
     /**
      * 连续播放失败计数。达到队列长度后停止跳歌，
      * 防止整队不可播（VIP/无版权/接口异常）时后台无限循环请求、跑掉巨额流量。
@@ -146,7 +166,8 @@ class PlayerService : Service() {
         registerNoisy()
         pending?.let {
             pending = null
-            setQueue(it.first, it.second)
+            setQueue(it.first, it.second, pendingCached)
+            pendingCached = false
         }
     }
 
@@ -181,9 +202,10 @@ class PlayerService : Service() {
 
     // ---------- 对外播放控制 ----------
 
-    fun setQueue(songs: List<Song>, startIndex: Int) {
+    fun setQueue(songs: List<Song>, startIndex: Int, cached: Boolean = false) {
         if (songs.isEmpty()) return
         queue = songs
+        preferCached = cached
         consecutiveFailures = 0
         val i = startIndex.coerceIn(0, songs.size - 1)
         index = i
@@ -293,8 +315,10 @@ class PlayerService : Service() {
             }
         }
 
-        // 命中音频缓存：零流量直接本地播放，不再请求播放地址
-        AudioCache.cached(song.id)?.let { file ->
+        // 命中音频缓存：零流量直接本地播放，不再请求播放地址；
+        // 缓存列表来的队列允许使用任意音质等级的本地文件（离线可播）
+        val local = if (preferCached) AudioCache.cachedAny(song.id) else AudioCache.cached(song.id)
+        local?.let { file ->
             beginPlayback(file.absolutePath, song, token)
             return
         }
@@ -311,7 +335,7 @@ class PlayerService : Service() {
             }
             // 先下载入磁盘缓存再播放：同一首歌此后永久零流量，
             // 也避免失败循环时对同一 URL 反复流式下载
-            AudioCache.fetch(song.id, url, { token != loadToken }) { file ->
+            AudioCache.fetch(song, url, { token != loadToken }) { file ->
                 handler.post {
                     if (token != loadToken) return@post
                     if (file == null) {

@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/search_hint"
+        app:boxBackgroundColor="@color/search_box"
         app:startIconDrawable="@drawable/ic_search"
         app:startIconTint="?attr/colorOnSurfaceVariant">
 

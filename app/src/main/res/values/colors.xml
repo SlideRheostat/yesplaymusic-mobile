@@ -42,4 +42,7 @@
     <!-- 系统导航栏（三大金刚键）：白色图标用中灰底；API27+ 深色图标用浅灰底 -->
     <color name="sys_nav_gray">#616161</color>
     <color name="sys_nav_gray_light">#E0E0E0</color>
+
+    <!-- 搜索框填充色（暗色在 values-night 覆盖） -->
+    <color name="search_box">#EEDFDC</color>
 </resources>

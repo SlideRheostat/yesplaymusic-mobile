@@ -7,6 +7,7 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.view.animation.Interpolator
 import android.view.animation.PathInterpolator
 import android.widget.ImageButton
@@ -16,6 +17,9 @@ import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.litemusic.Api
@@ -128,6 +132,7 @@ class PlayerActivity : AppCompatActivity(), PlayerService.Listener {
 
     override fun onStart() {
         super.onStart()
+        applyPlayerWindow()
         PlayerService.listeners.add(this)
         val s = PlayerService.instance
         if (s == null) {
@@ -143,6 +148,23 @@ class PlayerActivity : AppCompatActivity(), PlayerService.Listener {
     override fun onStop() {
         PlayerService.listeners.remove(this)
         super.onStop()
+    }
+
+    /** 播放页窗口模式：防熄屏 + 全屏（隐藏顶部状态栏），设置修改后再次进入生效 */
+    private fun applyPlayerWindow() {
+        if (Prefs.keepScreenOn) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        controller.systemBarsBehavior =
+            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        if (Prefs.playerFullscreen) {
+            controller.hide(WindowInsetsCompat.Type.statusBars())
+        } else {
+            controller.show(WindowInsetsCompat.Type.statusBars())
+        }
     }
 
     /** 暂停时没有进度回调，进入页面需要主动同步一次已缓存的播放位置 */
