@@ -10,123 +10,116 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <FrameLayout
+        <!-- 三个标签页：ViewPager2 支持跟手滑动切换 -->
+        <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
 
         <!-- M3 Navigation Bar（无标签紧凑形态）：64dp 容器、64×32 active indicator -->
-        <LinearLayout
+        <com.litemusic.ui.NavDragLayout
             android:id="@+id/bottom_nav"
             android:layout_width="match_parent"
             android:layout_height="64dp"
-            android:background="?attr/colorSurfaceContainer"
-            android:orientation="horizontal">
+            android:background="?attr/colorSurfaceContainer">
 
-            <com.litemusic.ui.CenteredRippleLayout
-                android:id="@+id/tab_home"
-                android:layout_width="0dp"
+            <!-- 点按反馈：目标页签下方先出现更淡的背景，切换完成后淡出 -->
+            <View
+                android:id="@+id/tab_indicator_hint"
+                android:layout_width="64dp"
+                android:layout_height="32dp"
+                android:layout_gravity="start|center_vertical"
+                android:alpha="0"
+                android:background="@drawable/nav_tab_pill"
+                android:visibility="invisible" />
+
+            <!-- 当前页面的深色指示器：在三个页签之间平移，滑动时跟手 -->
+            <View
+                android:id="@+id/tab_indicator"
+                android:layout_width="64dp"
+                android:layout_height="32dp"
+                android:layout_gravity="start|center_vertical"
+                android:background="@drawable/nav_tab_pill" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/nav_item_ripple"
-                android:clickable="true"
-                android:focusable="true">
+                android:orientation="horizontal">
 
-                <FrameLayout
-                    android:layout_width="64dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center">
+                <com.litemusic.ui.CenteredRippleLayout
+                    android:id="@+id/tab_home"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true">
 
-                    <!-- 胶囊与图标为兄弟关系：隐藏胶囊不影响图标显示 -->
-                    <View
-                        android:id="@+id/tab_home_pill"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:alpha="0"
-                        android:background="@drawable/nav_tab_pill"
-                        android:scaleX="0.64"
-                        android:scaleY="0.64" />
+                    <FrameLayout
+                        android:layout_width="64dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center">
 
-                    <ImageView
-                        android:id="@+id/tab_home_icon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:contentDescription="@string/tab_home"
-                        android:src="@drawable/ic_home_outlined"
-                        android:tint="?attr/colorOnSurfaceVariant" />
-                </FrameLayout>
-            </com.litemusic.ui.CenteredRippleLayout>
+                        <ImageView
+                            android:id="@+id/tab_home_icon"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/tab_home"
+                            android:src="@drawable/ic_home_outlined"
+                            android:tint="?attr/colorOnSurfaceVariant" />
+                    </FrameLayout>
+                </com.litemusic.ui.CenteredRippleLayout>
 
-            <com.litemusic.ui.CenteredRippleLayout
-                android:id="@+id/tab_search"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/nav_item_ripple"
-                android:clickable="true"
-                android:focusable="true">
+                <com.litemusic.ui.CenteredRippleLayout
+                    android:id="@+id/tab_search"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true">
 
-                <FrameLayout
-                    android:layout_width="64dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center">
+                    <FrameLayout
+                        android:layout_width="64dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center">
 
-                    <View
-                        android:id="@+id/tab_search_pill"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:alpha="0"
-                        android:background="@drawable/nav_tab_pill"
-                        android:scaleX="0.64"
-                        android:scaleY="0.64" />
+                        <ImageView
+                            android:id="@+id/tab_search_icon"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/tab_search"
+                            android:src="@drawable/ic_search_symbol"
+                            android:tint="?attr/colorOnSurfaceVariant" />
+                    </FrameLayout>
+                </com.litemusic.ui.CenteredRippleLayout>
 
-                    <ImageView
-                        android:id="@+id/tab_search_icon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:contentDescription="@string/tab_search"
-                        android:src="@drawable/ic_search"
-                        android:tint="?attr/colorOnSurfaceVariant" />
-                </FrameLayout>
-            </com.litemusic.ui.CenteredRippleLayout>
+                <com.litemusic.ui.CenteredRippleLayout
+                    android:id="@+id/tab_mine"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true">
 
-            <com.litemusic.ui.CenteredRippleLayout
-                android:id="@+id/tab_mine"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/nav_item_ripple"
-                android:clickable="true"
-                android:focusable="true">
+                    <FrameLayout
+                        android:layout_width="64dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="center">
 
-                <FrameLayout
-                    android:layout_width="64dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center">
-
-                    <View
-                        android:id="@+id/tab_mine_pill"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:alpha="0"
-                        android:background="@drawable/nav_tab_pill"
-                        android:scaleX="0.64"
-                        android:scaleY="0.64" />
-
-                    <ImageView
-                        android:id="@+id/tab_mine_icon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:contentDescription="@string/tab_mine"
-                        android:src="@drawable/ic_person_outlined"
-                        android:tint="?attr/colorOnSurfaceVariant" />
-                </FrameLayout>
-            </com.litemusic.ui.CenteredRippleLayout>
-        </LinearLayout>
+                        <ImageView
+                            android:id="@+id/tab_mine_icon"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:contentDescription="@string/tab_mine"
+                            android:src="@drawable/ic_account_circle"
+                            android:tint="?attr/colorOnSurfaceVariant" />
+                    </FrameLayout>
+                </com.litemusic.ui.CenteredRippleLayout>
+            </LinearLayout>
+        </com.litemusic.ui.NavDragLayout>
     </LinearLayout>
 
     <!-- 迷你播放条：悬浮覆盖在内容上，位于底栏上方 8dp -->

@@ -240,8 +240,8 @@ app/build/outputs/apk/debug/app-debug.apk
 
 ### 版本信息
 
-- `versionName`: 3.2.0
-- `versionCode`: 42
+- `versionName`: 3.2.5
+- `versionCode`: 47
 - `applicationId`: `com.yesplaymusic.mobile`
 - 源码 namespace: `com.litemusic`
 
