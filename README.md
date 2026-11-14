@@ -1,6 +1,6 @@
 # 写在前面
-本人只是一个无能的高中生，近期沉迷vibe coding，想要一个小而美的移动端听歌软件，看到yesplaymusic开源但是只有电脑端于是让AI以他为参考，生成手机应用，同时融入了自己对UI设计的喜好和理解。
-本项目由deepseek 4.1 flash和Qwen 3.8 flash共同制作和编译，希望大家喜欢，也欢迎批评和指正
+本人只是一个无能的高中生，近期沉迷vibe coding，想要一个小而美的移动端听歌软件，看到yesplaymusic开源（原项目地址：https://github.com/qier222/YesPlayMusic）但是只有电脑端于是让AI以它为参考，生成了手机应用，同时融入了自己对UI设计的喜好和理解。
+本项目由 deepseek-V4.1-Flash 和 Qwen3.8-Flash 共同制作和编译，希望大家喜欢，也欢迎批评和指正。
 ### 与yesplaymusic不同之处
 - 本项目基于Kotlin实现，不依赖 WebView，
 - 本项目使用Material Design 3主题与动效，同时融入我自己的好恶，个人认为UI还算优雅
