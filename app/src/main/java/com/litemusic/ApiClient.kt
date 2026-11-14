@@ -3,6 +3,7 @@ package com.litemusic
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import org.json.JSONArray
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URLEncoder
@@ -31,6 +32,10 @@ object ApiClient {
         "9ca17ae2e6ffcda170e2e6ee8af14fbabdb988f225b3868eb2c15a879b9a83d274a790ac8ff54a97b889d5d42af0feaec3b92af58cff99c470a7eafd88f75e839a9ea7c14e909da883e83fb692a3abdb6b92adee9e"
     private const val WEAPI_UA =
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.0"
+    private const val CLIENTLOG_URL = "https://clientlog.music.163.com/eapi/feedback/weblog"
+    private const val CLIENTLOG_URI = "/api/feedback/weblog"
+    private const val CLIENTLOG_UA =
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 
     private val executor = Executors.newSingleThreadExecutor()
     private val main = Handler(Looper.getMainLooper())
@@ -59,6 +64,84 @@ object ApiClient {
                 Result.failure(e)
             }
             main.post { cb(result) }
+        }
+    }
+
+    /**
+     * 听歌打卡上报（clientlog 域名的 eapi feedback/weblog）。
+     * 每条日志单独请求：action=startplay 进入「最近播放」，action=play 累计「听歌排行」。
+     * 失败只写日志，绝不影响播放。
+     */
+    fun sendWeblog(action: String, json: JSONObject, cb: ((Result<JSONObject>) -> Unit)? = null) {
+        executor.execute {
+            val result = try {
+                Result.success(doSendWeblog(action, json))
+            } catch (e: Throwable) {
+                Log.w(TAG, "weblog $action failed code=${(e as? ApiException)?.code} msg=${e.message}")
+                Result.failure(e)
+            }
+            main.post { cb?.invoke(result) }
+        }
+    }
+
+    private fun doSendWeblog(action: String, json: JSONObject): JSONObject {
+        val now = System.currentTimeMillis()
+        // 与桌面端 macOS 客户端一致的设备信息
+        val header = JSONObject()
+            .put("osver", "15.5")
+            .put("deviceId", Prefs.deviceId)
+            .put("os", "osx")
+            .put("appver", "3.1.10.5100")
+            .put("versioncode", "140")
+            .put("mobilename", "")
+            .put("buildver", (now / 1000).toString())
+            .put("resolution", "1920x1080")
+            .put("__csrf", Prefs.csrf)
+            .put("channel", "netease")
+            .put("requestId", "${now}_${(Math.random() * 1000).toInt()}")
+            .put("MUSIC_U", Prefs.musicU)
+
+        val logs = JSONArray().put(JSONObject().put("action", action).put("json", json))
+        val data = JSONObject()
+            .put("logs", logs.toString())
+            .put("e_r", false)
+            .put("header", header)
+        val body = "params=" + URLEncoder.encode(Eapi.encrypt(CLIENTLOG_URI, data.toString()), "UTF-8")
+
+        val conn = (java.net.URL(CLIENTLOG_URL).openConnection() as HttpsURLConnection).apply {
+            requestMethod = "POST"
+            connectTimeout = 15_000
+            readTimeout = 20_000
+            doOutput = true
+            setRequestProperty("Content-Type", "application/x-www-form-urlencoded")
+            setRequestProperty("User-Agent", CLIENTLOG_UA)
+            val cookie = header.keys().asSequence().joinToString("; ") { k ->
+                URLEncoder.encode(k, "UTF-8") + "=" +
+                    URLEncoder.encode(header.optString(k, ""), "UTF-8")
+            }
+            setRequestProperty("Cookie", cookie)
+        }
+
+        try {
+            conn.outputStream.use { it.write(body.toByteArray()) }
+            val code = conn.responseCode
+            val stream = if (code >= 400) conn.errorStream else conn.inputStream
+            val bytes = stream?.use { it.readBytes() } ?: ByteArray(0)
+            val text = String(bytes, Charsets.UTF_8)
+            if (text.isEmpty()) throw ApiException(-3, "空响应")
+            val result = JSONObject(text)
+            val bizCode = result.optInt("code", 200)
+            if (bizCode != 200) {
+                throw ApiException(
+                    bizCode,
+                    result.optString("message").ifEmpty { result.optString("msg") }
+                        .ifEmpty { "打卡失败($bizCode)" }
+                )
+            }
+            Log.d(TAG, "weblog $action ok")
+            return result
+        } finally {
+            conn.disconnect()
         }
     }
 

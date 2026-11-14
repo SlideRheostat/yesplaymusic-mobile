@@ -33,6 +33,9 @@ data class Playlist(
 
 data class LyricLine(val time: Long, val text: String, val trans: String? = null, val roma: String? = null)
 
+/** 听歌排行条目：歌曲 + 该时间范围内的播放次数 */
+data class PlayRecordItem(val song: Song, val playCount: Int)
+
 object Parser {
     fun song(o: JSONObject): Song {
         val ar = o.optJSONArray("ar") ?: o.optJSONArray("artists")

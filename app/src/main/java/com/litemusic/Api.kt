@@ -509,6 +509,40 @@ object Api {
         }
     }
 
+    /**
+     * 听歌排行（官方 user_record）：type=1 最近一周 weekData，type=0 所有时间 allData。
+     * 优先 eapi，失败回退 weapi（与专辑/关注列表相同的容错策略）。
+     */
+    fun playRecord(type: Int, cb: (Result<List<PlayRecordItem>>) -> Unit) {
+        val d = JSONObject()
+        d.put("uid", Prefs.userId)
+        d.put("type", if (type == 1) 1 else 0)
+        val parse: (JSONObject) -> List<PlayRecordItem> = { json ->
+            val arr = json.optJSONArray(if (type == 1) "weekData" else "allData")
+                ?: json.optJSONArray("weekData")
+                ?: json.optJSONArray("allData")
+                ?: JSONArray()
+            val out = ArrayList<PlayRecordItem>(arr.length())
+            for (i in 0 until arr.length()) {
+                val o = arr.optJSONObject(i) ?: continue
+                val s = o.optJSONObject("song") ?: continue
+                val song = Parser.song(s)
+                if (song.id > 0) out.add(PlayRecordItem(song, o.optInt("playCount", 0)))
+            }
+            out
+        }
+        ApiClient.get("v1/play/record", d) { r ->
+            if (r.isSuccess) {
+                cb(Result.success(parse(r.getOrThrow())))
+            } else {
+                ApiClient.getWeapi("v1/play/record", JSONObject(d.toString())) { r2 ->
+                    r2.onSuccess { cb(Result.success(parse(it))) }
+                        .onFailure { cb(Result.failure(it)) }
+                }
+            }
+        }
+    }
+
     /** 关注/取消关注艺人（官方 artist_sub：artistId + artistIds='[id]'）。
      *  关注/取关均为敏感写操作：统一走 linuxapi（官方 Linux 桌面端通道，风控最宽松）。
      *  eapi 的 artist/sub 路由无官方支持（关注会被风控提示"网络环境存在风险"，
@@ -588,6 +622,30 @@ object Api {
             Prefs.clearLogin()
             cb(r.map { true })
         }
+    }
+
+    /**
+     * 听歌打卡：startplay（最近播放）+ play（听歌排行）。
+     * [timeSeconds] 为本次实际播放秒数，自然播完时传歌曲时长；不足 1 秒不上报。
+     * 整个流程失败静默，不影响播放。
+     */
+    fun scrobble(songId: Long, timeSeconds: Int, sourceId: Long = 0) {
+        if (!Prefs.loggedIn || songId <= 0 || timeSeconds < 1) return
+        val base = JSONObject()
+            .put("id", songId.toString())
+            .put("type", "song")
+            .put("mainsite", "1")
+            .put("mainsiteWeb", "1")
+            .put("content", "id=$sourceId")
+        val play = JSONObject(base.toString())
+            .put("download", 0)
+            .put("end", "playend")
+            .put("sourceId", sourceId.toString())
+            .put("time", timeSeconds)
+            .put("wifi", 0)
+            .put("source", "list")
+        ApiClient.sendWeblog("startplay", base)
+        ApiClient.sendWeblog("play", play)
     }
 
     private fun saveAccount(json: JSONObject) {

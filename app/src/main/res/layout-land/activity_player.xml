@@ -256,14 +256,13 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- 右列：歌词 -->
+    <!-- 右列：歌词；不加底部内边距，歌词视口延伸到屏幕底边，避免最后一行提前被裁切 -->
     <FrameLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:paddingStart="8dp"
-        android:paddingEnd="32dp"
-        android:paddingBottom="16dp">
+        android:paddingEnd="32dp">
 
         <ScrollView
             android:id="@+id/lyric_scroll"

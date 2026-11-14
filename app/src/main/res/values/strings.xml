@@ -9,6 +9,15 @@
     <string name="daily_recommend">每日推荐</string>
     <string name="recommend_playlists">推荐歌单</string>
     <string name="my_favorites">我喜欢的音乐</string>
+    <string name="my_library">我的音乐库</string>
+    <string name="tab_playlists">歌单</string>
+    <string name="tab_albums">专辑</string>
+    <string name="tab_artists">艺人</string>
+    <string name="listen_ranking">听歌排行</string>
+    <string name="rank_week">最近一周</string>
+    <string name="rank_all">所有时间</string>
+    <string name="no_play_record">暂无听歌记录</string>
+    <string name="play_count_times">%1$d 次</string>
     <string name="my_playlists">我的歌单</string>
     <string name="my_albums">我的专辑</string>
     <string name="followed_artists">关注艺人</string>
@@ -55,6 +64,10 @@
     <string name="cache_limit_unit">MB</string>
     <string name="lyric_size">歌词字号</string>
     <string name="cached_songs">已缓存的歌</string>
+    <string name="clear_cache">清除歌曲缓存</string>
+    <string name="clear_cache_confirm">将删除全部已缓存的歌曲，正在播放的歌曲会保留。是否继续？</string>
+    <string name="clear_cache_done">已清除歌曲缓存</string>
+    <string name="clear_cache_empty">暂无可清除的缓存</string>
     <string name="cached_songs_summary">%1$d 首 · %2$s</string>
     <string name="cached_songs_empty">暂无缓存歌曲</string>
     <string name="unknown_song">未知歌曲</string>

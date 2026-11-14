@@ -128,6 +128,9 @@ class PlayerService : Service() {
     private var loadToken = 0
     private var lastNotifPlaying: Boolean? = null
 
+    /** 当前播放会话是否已上报听歌打卡，避免切歌与播完回调重复上报 */
+    private var scrobbled = false
+
     /** 当前队列来自“已缓存的歌”：优先播放任意音质等级的本地缓存文件 */
     private var preferCached = false
 
@@ -186,6 +189,7 @@ class PlayerService : Service() {
     }
 
     override fun onDestroy() {
+        scrobbleCurrent(completed = false)
         handler.removeCallbacks(ticker)
         try { unregisterReceiver(noisyReceiver) } catch (_: Exception) {}
         mp?.release()
@@ -204,6 +208,8 @@ class PlayerService : Service() {
 
     fun setQueue(songs: List<Song>, startIndex: Int, cached: Boolean = false) {
         if (songs.isEmpty()) return
+        // 新队列替换当前播放前，先结算上一首的播放记录
+        scrobbleCurrent(completed = false)
         queue = songs
         preferCached = cached
         consecutiveFailures = 0
@@ -260,6 +266,7 @@ class PlayerService : Service() {
 
     fun next() {
         if (queue.isEmpty()) return
+        scrobbleCurrent(completed = false)
         index = when (mode) {
             MODE_SHUFFLE -> randomIndex()
             else -> (index + 1) % queue.size
@@ -269,6 +276,7 @@ class PlayerService : Service() {
 
     fun prev() {
         if (queue.isEmpty()) return
+        scrobbleCurrent(completed = false)
         index = when (mode) {
             MODE_SHUFFLE -> randomIndex()
             else -> if (index - 1 < 0) queue.size - 1 else index - 1
@@ -294,6 +302,7 @@ class PlayerService : Service() {
     private fun playCurrent() {
         val song = currentSong ?: return
         val token = ++loadToken
+        scrobbled = false
         playing = false
         duration = 0
         lastPosition = 0
@@ -349,6 +358,24 @@ class PlayerService : Service() {
     }
 
     /**
+     * 上报当前歌曲的播放记录（最近播放 + 听歌排行）。
+     * 切歌、退出服务时传 completed=false 使用当前播放位置；自然播完传 true 使用整首时长。
+     * 同一首歌只上报一次，失败由 ApiClient 静默处理。
+     */
+    private fun scrobbleCurrent(completed: Boolean) {
+        if (!Prefs.loggedIn || scrobbled) return
+        val song = currentSong ?: return
+        val seconds = if (completed) {
+            (if (duration > 0) duration else song.duration.toInt()) / 1000
+        } else {
+            position / 1000
+        }
+        if (seconds < 1) return
+        scrobbled = true
+        Api.scrobble(song.id, seconds)
+    }
+
+    /**
      * 播放失败统一处理：未达上限则延时跳下一首；
      * 连续失败达到队列长度（整队都不可播）时停止，杜绝后台死循环跑流量。
      */
@@ -389,7 +416,10 @@ class PlayerService : Service() {
             }
             p.setOnCompletionListener {
                 if (token != loadToken) return@setOnCompletionListener
+                scrobbleCurrent(completed = true)
                 if (mode == MODE_LOOP_ONE) {
+                    // 单曲循环：本次已按整首时长上报，重新开始新一轮
+                    scrobbled = false
                     lastPosition = 0
                     try { p.seekTo(0); p.start() } catch (_: Exception) {}
                 } else {

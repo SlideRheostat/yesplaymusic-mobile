@@ -55,6 +55,8 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(CachedSongsActivity.launch(this))
         }
 
+        findViewById<View>(R.id.row_clear_cache).setOnClickListener { confirmClearCache() }
+
         val keepSwitch = findViewById<MaterialSwitch>(R.id.switch_keep_screen)
         keepSwitch.isChecked = Prefs.keepScreenOn
         findViewById<View>(R.id.row_keep_screen).setOnClickListener {
@@ -105,6 +107,34 @@ class SettingsActivity : AppCompatActivity() {
                 value.text = if (count == 0) "" else getString(
                     R.string.cached_songs_summary, count, formatSize(bytes)
                 )
+            }
+        }.start()
+    }
+
+    /** 清除歌曲缓存：删除全部缓存文件，正在播放的歌曲保留，避免打断播放 */
+    private fun confirmClearCache() {
+        Thread {
+            val (count, _) = AudioCache.summary()
+            runOnUiThread {
+                if (isFinishing || isDestroyed) return@runOnUiThread
+                if (count == 0) {
+                    Toast.makeText(this, R.string.clear_cache_empty, Toast.LENGTH_SHORT).show()
+                    return@runOnUiThread
+                }
+                MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.clear_cache)
+                    .setMessage(R.string.clear_cache_confirm)
+                    .setPositiveButton(android.R.string.ok) { _, _ ->
+                        AudioCache.clearAll(PlayerService.instance?.currentSong?.id) {
+                            runOnUiThread {
+                                if (isFinishing || isDestroyed) return@runOnUiThread
+                                Toast.makeText(this, R.string.clear_cache_done, Toast.LENGTH_SHORT).show()
+                                refreshCachedSummary()
+                            }
+                        }
+                    }
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .show()
             }
         }.start()
     }
@@ -221,7 +251,8 @@ class SettingsActivity : AppCompatActivity() {
                 } else {
                     Prefs.cacheMB = v
                     valueView.text = cacheLabel()
-                    AudioCache.applyLimit()
+                    // 调小上限时保留正在播放的歌曲文件，避免播放中断
+                    AudioCache.applyLimit(PlayerService.instance?.currentSong?.id)
                     refreshCachedSummary()
                 }
             }

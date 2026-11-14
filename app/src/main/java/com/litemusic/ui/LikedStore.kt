@@ -23,6 +23,12 @@ object LikedStore {
         if (liked) ids.add(id) else ids.remove(id)
     }
 
+    /** 批量替换红心 id（横屏音乐库一次性拉取完整列表后使用） */
+    fun replace(all: Collection<Long>) {
+        ids.clear()
+        ids.addAll(all)
+    }
+
     fun size(): Int = ids.size
 
     fun clear() {

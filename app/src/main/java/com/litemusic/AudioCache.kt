@@ -16,19 +16,26 @@ import java.util.concurrent.Executors
  * 整首重新下载；播放失败时后台还会无限跳歌循环请求。现在每首歌只下载一次，
  * 命中缓存后完全零流量本地播放。
  *
+ * 目录放在 filesDir 而不是 cacheDir：cacheDir 会被系统按缓存配额或 ROM
+ * 清理工具整体回收，导致"已缓存的歌"在使用一段时间后整批消失。
+ *
  * 同时在音频文件旁保存同名的 .meta 元数据（歌名/歌手/专辑/封面等），
  * 供设置页"已缓存的歌"离线列表展示，无需联网即可还原歌曲信息。
  */
 object AudioCache {
     private val executor = Executors.newSingleThreadExecutor()
     private var dir: File? = null
+    /** 旧版本使用的 cacheDir/audio，仅用于升级迁移与清理 */
+    private var legacyDir: File? = null
 
     /** 一个缓存音频文件；id 从文件名解析，level 为该文件缓存时的音质 */
     data class Entry(val file: File, val id: Long, val level: String)
 
     fun init(ctx: Context) {
-        val d = File(ctx.cacheDir, "audio")
+        val d = File(ctx.filesDir, "audio")
         d.mkdirs()
+        legacyDir = File(ctx.cacheDir, "audio")
+        migrateLegacy(legacyDir!!, d)
         // 清理上次未下完的临时文件，以及对应音频已不存在的孤儿元数据
         d.listFiles()?.forEach { f ->
             when {
@@ -38,6 +45,23 @@ object AudioCache {
             }
         }
         dir = d
+    }
+
+    /** 把旧版本位于 cacheDir/audio 的缓存搬到 filesDir/audio；迁移失败的文件留在原处 */
+    private fun migrateLegacy(from: File, to: File) {
+        if (!from.isDirectory) return
+        from.listFiles()?.forEach { f ->
+            if (f.name.endsWith(".tmp")) {
+                f.delete()
+                return@forEach
+            }
+            val target = File(to, f.name)
+            if (target.exists()) {
+                f.delete()
+            } else {
+                f.renameTo(target)
+            }
+        }
     }
 
     /** 缓存键含音质等级，切换音质不会误用旧文件 */
@@ -139,9 +163,27 @@ object AudioCache {
         }
     }
 
-    /** 设置页修改缓存上限后按新上限回收 */
-    fun applyLimit() {
-        executor.execute { trim() }
+    /** 设置页修改缓存上限后按新上限回收；[keepId] 对应的歌曲文件保留（通常是正在播放的歌） */
+    fun applyLimit(keepId: Long? = null) {
+        executor.execute {
+            val keep = keepId?.let { id -> entries().firstOrNull { it.id == id }?.file }
+            trim(keep)
+        }
+    }
+
+    /** 清除全部歌曲缓存；[keepId] 对应的歌曲文件保留（正在播放的歌不会被打断） */
+    fun clearAll(keepId: Long? = null, cb: (() -> Unit)? = null) {
+        executor.execute {
+            for (d in listOfNotNull(dir, legacyDir)) {
+                d.listFiles()?.forEach { f ->
+                    if (keepId != null && keepId > 0 && f.name.substringBefore('-').toLongOrNull() == keepId) {
+                        return@forEach
+                    }
+                    f.delete()
+                }
+            }
+            cb?.invoke()
+        }
     }
 
     /**
@@ -214,15 +256,17 @@ object AudioCache {
 
     /**
      * 超出体积上限时按最久未使用淘汰。
-     * [keep] 为刚下载完成、即将交给播放器的文件，即使单曲超过上限也不能删除；
-     * 此时缓存最多临时超出上限一首歌的体积，后续新歌下载时会继续回收旧文件。
+     * [keep] 为刚下载完成或正在播放的文件，不参与上限计算：
+     * 其他缓存仍按上限回收，避免单曲体积大于上限时把其余缓存一次性清空；
+     * 此时缓存最多临时超出上限一首歌的体积。
      */
     private fun trim(keep: File? = null) {
         val d = dir ?: return
         val maxBytes = Prefs.cacheMB.coerceAtLeast(1) * 1024L * 1024L
         val files = d.listFiles()?.filter { it.isFile && it.name.endsWith(".aud") }
             ?.sortedByDescending { it.lastModified() } ?: return
-        var total = files.sumOf { it.length() }
+        val keepLength = if (keep != null && keep.isFile) keep.length() else 0L
+        var total = files.sumOf { it.length() } - keepLength
         for (f in files.asReversed()) {
             if (total <= maxBytes) break
             if (keep != null && f.absolutePath == keep.absolutePath) continue
